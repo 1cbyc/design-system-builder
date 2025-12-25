@@ -1,65 +1,96 @@
-import Image from "next/image";
+'use client'
+
+import { signIn, signOut, useSession } from 'next-auth/react'
 
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+  const { data: session, status } = useSession()
+
+  if (status === 'loading') {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-lg">Loading...</p>
+      </div>
+    )
+  }
+
+  if (!session) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-8 p-8">
+        <div className="text-center">
+          <h1 className="mb-4 text-5xl font-bold">Design System Builder</h1>
+          <p className="mb-8 text-xl text-gray-600">
+            Create, document, and maintain component libraries
           </p>
+          <button
+            onClick={() => signIn()}
+            className="rounded-lg bg-blue-600 px-8 py-3 text-lg font-semibold text-white hover:bg-blue-700 transition"
+          >
+            Sign In to Get Started
+          </button>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl">
+          <div className="text-center p-6">
+            <div className="text-4xl mb-4">🎨</div>
+            <h3 className="text-lg font-semibold mb-2">Visual Builder</h3>
+            <p className="text-gray-600">
+              Create components visually with live preview
+            </p>
+          </div>
+          <div className="text-center p-6">
+            <div className="text-4xl mb-4">⚡</div>
+            <h3 className="text-lg font-semibold mb-2">Code Generation</h3>
+            <p className="text-gray-600">
+              Export to React, Vue, or Svelte
+            </p>
+          </div>
+          <div className="text-center p-6">
+            <div className="text-4xl mb-4">📚</div>
+            <h3 className="text-lg font-semibold mb-2">Documentation</h3>
+            <p className="text-gray-600">
+              Auto-generate docs site with Storybook
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen p-8">
+      <header className="mb-8 flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Design System Builder</h1>
+        <div className="flex items-center gap-4">
+          <span className="text-gray-600">
+            {session.user?.name || session.user?.email}
+          </span>
+          <button
+            onClick={() => signOut()}
+            className="rounded-lg bg-gray-200 px-4 py-2 hover:bg-gray-300 transition"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            Sign Out
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <div className="mb-8">
+          <h2 className="text-2xl font-semibold mb-4">Your Projects</h2>
+          <p className="text-gray-600 mb-4">
+            Get started by creating your first design system project.
+          </p>
+          <button className="rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700 transition">
+            + New Project
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Project cards will go here */}
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+            <p className="text-gray-500">No projects yet</p>
+          </div>
         </div>
       </main>
     </div>
-  );
+  )
 }
