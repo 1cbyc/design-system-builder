@@ -42,6 +42,5 @@ next-env.d.ts
 
 
 # 1cbyc
-*.ps1
 *.md
 /app/generated/prisma
