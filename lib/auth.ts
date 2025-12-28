@@ -1,33 +1,52 @@
 import { NextAuthOptions } from 'next-auth'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
-import GithubProvider from 'next-auth/providers/github'
-import GoogleProvider from 'next-auth/providers/google'
+import CredentialsProvider from 'next-auth/providers/credentials'
 import { prisma } from './prisma'
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
-    GithubProvider({
-      clientId: process.env.GITHUB_ID || '',
-      clientSecret: process.env.GITHUB_SECRET || '',
-    }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_ID || '',
-      clientSecret: process.env.GOOGLE_SECRET || '',
+    CredentialsProvider({
+      name: 'Demo',
+      credentials: {
+        name: { label: "Name", type: "text", placeholder: "Enter any name" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.name) return null
+        
+        // Find or create user
+        let user = await prisma.user.findFirst({
+          where: { name: credentials.name }
+        })
+        
+        if (!user) {
+          user = await prisma.user.create({
+            data: {
+              name: credentials.name,
+              email: `${credentials.name.toLowerCase().replace(/\s+/g, '')}@demo.com`,
+            }
+          })
+        }
+        
+        return user
+      }
     }),
   ],
   callbacks: {
-    session: async ({ session, user }) => {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+      }
+      return token
+    },
+    async session({ session, token }) {
       if (session?.user) {
-        session.user.id = user.id
+        session.user.id = token.id as string
       }
       return session
     },
   },
   session: {
-    strategy: 'database',
-  },
-  pages: {
-    signIn: '/auth/signin',
+    strategy: 'jwt',
   },
 }
