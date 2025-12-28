@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { CreateComponentModal } from '@/components/create-component-modal'
 import { CreateThemeModal } from '@/components/create-theme-modal'
+import { CreatePageModal } from '@/components/create-page-modal'
 
 export default function ProjectPage() {
   const params = useParams()
@@ -16,6 +17,7 @@ export default function ProjectPage() {
   const [activeTab, setActiveTab] = useState<'components' | 'themes' | 'pages'>('components')
   const [isComponentModalOpen, setIsComponentModalOpen] = useState(false)
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false)
+  const [isPageModalOpen, setIsPageModalOpen] = useState(false)
 
   const { data: project, isLoading } = trpc.project.getBySlug.useQuery({ slug })
 
