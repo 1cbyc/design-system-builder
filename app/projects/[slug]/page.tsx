@@ -242,7 +242,10 @@ export default function ProjectPage() {
           <div>
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-xl font-semibold text-gray-900">Documentation Pages</h2>
-              <button className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition">
+              <button 
+                onClick={() => setIsPageModalOpen(true)}
+                className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition"
+              >
                 + New Page
               </button>
             </div>
@@ -251,33 +254,31 @@ export default function ProjectPage() {
                 <div className="text-5xl mb-4">📄</div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No pages yet</h3>
                 <p className="text-gray-600 mb-6">Start documenting your design system</p>
-                <button className="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 transition">
+                <button 
+                  onClick={() => setIsPageModalOpen(true)}
+                  className="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 transition"
+                >
                   Create First Page
                 </button>
               </div>
             ) : (
               <div className="space-y-2">
                 {project.pages.map((page) => (
-                  <div
+                  <Link
                     key={page.id}
-                    className="rounded-lg border border-gray-200 bg-white p-4 hover:shadow-sm transition"
+                    href={`/projects/${slug}/pages/${page.id}`}
+                    className="block rounded-lg border border-gray-200 bg-white p-4 hover:shadow-sm transition"
                   >
                     <div className="flex items-center justify-between">
                       <div>
                         <h3 className="font-semibold text-gray-900">{page.title}</h3>
-                        {page.category && (
-                          <span className="text-sm text-gray-500">{page.category}</span>
-                        )}
+                        <span className="text-sm text-gray-500">{page.slug}</span>
                       </div>
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        page.published
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}>
-                        {page.published ? 'Published' : 'Draft'}
+                      <span className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-800">
+                        Documentation
                       </span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}
@@ -293,6 +294,11 @@ export default function ProjectPage() {
       <CreateThemeModal 
         isOpen={isThemeModalOpen} 
         onClose={() => setIsThemeModalOpen(false)}
+        projectId={project.id}
+      />
+      <CreatePageModal 
+        isOpen={isPageModalOpen} 
+        onClose={() => setIsPageModalOpen(false)}
         projectId={project.id}
       />
     </div>
