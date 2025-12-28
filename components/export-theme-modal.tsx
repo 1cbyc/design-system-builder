@@ -23,10 +23,10 @@ export function ExportThemeModal({ isOpen, onClose, theme }: ExportThemeModalPro
   const [copied, setCopied] = useState(false)
 
   const generatedCode = format === 'css' 
-    ? generateThemeCSS(theme)
+    ? generateThemeCSS(theme as any)
     : format === 'tailwind'
-    ? generateThemeTailwind(theme)
-    : generateThemeJSON(theme)
+    ? generateThemeTailwind(theme as any)
+    : generateThemeJSON(theme as any)
 
   const handleCopy = () => {
     navigator.clipboard.writeText(generatedCode)
